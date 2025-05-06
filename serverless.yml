@@ -18,6 +18,7 @@ provider:
     cors:
       allowedOrigins:
         - http://localhost:5173
+        - https://dynamic-puppy-d5a55c.netlify.app
       allowedHeaders:
       - Content-Type
       - Authorization

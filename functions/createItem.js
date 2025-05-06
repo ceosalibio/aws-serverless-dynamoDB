@@ -1,13 +1,14 @@
 const { PutItemCommand } = require("@aws-sdk/client-dynamodb");
 const { dynamoDbClient, validateApiKey } = require("../utils/awsClients");
 const { v4: uuidv4 } = require("uuid");
+const { unmarshall } = require("@aws-sdk/util-dynamodb"); //use to make javascrpit object format
 
 exports.main = async (event) => {
   try {
     await validateApiKey(event.headers);
 
     const body = JSON.parse(event.body);
-    const item = {
+    const val = {
       id: { S: uuidv4() },
       brand: { S: body.brand },
       type: { S: body.type },
@@ -18,8 +19,10 @@ exports.main = async (event) => {
 
     await dynamoDbClient.send(new PutItemCommand({
       TableName: process.env.DYNAMODB_TABLE,
-      Item: item
+      Item: val
     }));
+
+    const item = unmarshall(val)
 
     return {
       statusCode: 201,

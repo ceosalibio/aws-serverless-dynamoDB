@@ -1,5 +1,6 @@
 const { UpdateItemCommand } = require("@aws-sdk/client-dynamodb");
 const { dynamoDbClient, validateApiKey } = require("../utils/awsClients");
+const { unmarshall } = require("@aws-sdk/util-dynamodb"); //use to make javascrpit object format
 
 exports.main = async (event) => {
   try {
@@ -34,10 +35,10 @@ exports.main = async (event) => {
     };
 
     const result = await dynamoDbClient.send(new UpdateItemCommand(params));
-
+    const item = unmarshall(result.Attributes)
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: "Item updated", data: result.Attributes }),
+      body: JSON.stringify({ message: "Item updated", data: item }),
     };
   } catch (error) {
     console.error("Error updating item:", error);
