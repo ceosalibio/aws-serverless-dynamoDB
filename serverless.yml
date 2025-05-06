@@ -1,0 +1,74 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: arceosalibio
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: aws-serverless-lambda
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-southeast-2
+  iamRoleStatements:
+    - Effect: Allow
+      Action: "*"
+      Resource: "*"
+  environment:
+    DYNAMODB_TABLE: ceo-serverless
+  httpApi:
+    cors:
+      allowedOrigins:
+        - http://localhost:5173
+      allowedHeaders:
+      - Content-Type
+      - Authorization
+      - x-api-key
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowCredentials: true
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
+
+  createItem:
+    handler: functions/createItem.main
+    events:
+      - httpApi:
+          path: /items
+          method: post
+
+  getItem:
+    handler: functions/getItem.main
+    events:
+      - httpApi:
+          path: /items/{id}
+          method: get
+
+  upadteItem:
+    handler: functions/updateItem.main
+    events:
+      - httpApi:
+          path: /items/{id}
+          method: put
+
+  deleteItem:
+    handler: functions/deleteItem.main
+    events:
+      - httpApi:
+          path: /items/{id}
+          method: delete
+
+  listItems:
+    handler: functions/listItems.main
+    events:
+      - httpApi:
+          path: /items
+          method: get
